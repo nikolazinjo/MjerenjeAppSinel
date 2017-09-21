@@ -1,0 +1,4 @@
+kompajliranje: u terminalu pozicionirat se u vršni direktorij projekta i zadat 'mvn clean compile assembly:single install' i zatim jos jednom pokrenut 'mvn clean install'
+    -> generirat će se rs232 communicator jar, te još jedan rs232 communicator jar sa uključenim dependency bibliotekama
+
+    -> treba imat instaliran maven na kompjuteru i podešene env varijable (na stranici od mavena ima sve)
