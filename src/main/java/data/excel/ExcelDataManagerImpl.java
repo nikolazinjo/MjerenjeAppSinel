@@ -23,7 +23,7 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
     public static final int COUNTER_COLUMN_INDEX = 5;
     public static final int COLUMN_INDEX = 0;
     public static final int START_ROW_INDEX = 1;
-    private static final List<String> notAllowed = new ArrayList<>();
+    private final List<String> notAllowed = new ArrayList<>();
 
     private Map<String, Integer> currentSheetIndexes = new LinkedHashMap<>();
     private Map<String, List<String>> workbookData = new LinkedHashMap<>();
@@ -34,12 +34,13 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
     private Path inputExcelFile;
 
 
-    public ExcelDataManagerImpl(HSSFWorkbook workbook) {
+    public ExcelDataManagerImpl(HSSFWorkbook workbook, List<String> notAllowed) {
         this.hssfWorkbook = workbook;
+        this.notAllowed.addAll(notAllowed);
         loadSheets();
     }
 
-    public ExcelDataManagerImpl(Path inputExcelFile) {
+    public ExcelDataManagerImpl(Path inputExcelFile, List<String> notAllowed) {
         if (!Files.isReadable(inputExcelFile)) {
             throw new RuntimeException("File '" + inputExcelFile.getFileName() + "' can't be open opened or read!");
         }
@@ -52,6 +53,7 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
 
         loadSheets();
         this.inputExcelFile = inputExcelFile;
+        this.notAllowed.addAll(notAllowed);
     }
 
     private void loadSheets() {

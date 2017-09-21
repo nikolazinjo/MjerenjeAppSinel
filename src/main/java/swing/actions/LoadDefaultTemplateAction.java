@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class LoadDefaultTemplateAction extends AbstractAction {
 
-    private static final String DEFAULT_FILE_NAME = "MjerenjeTemplate.xls";
+    public static final String DEFAULT_FILE_NAME = "MjerenjeTemplate.xls";
     private ApplicationFrame frame;
 
     public LoadDefaultTemplateAction(String name, ApplicationFrame frame) {
@@ -33,7 +33,7 @@ public class LoadDefaultTemplateAction extends AbstractAction {
             @Override
             public void run() {
                 try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(DEFAULT_FILE_NAME)) {
-                    ExcelDataManager dataManager = new ExcelDataManagerImpl(new HSSFWorkbook(inputStream));
+                    ExcelDataManager dataManager = new ExcelDataManagerImpl(new HSSFWorkbook(inputStream), frame.getNotAllowedSheets());
                     frame.setExcelDataManager(dataManager);
                 } catch (final Exception ex) {
                     Runnable swingJob = new Runnable() {

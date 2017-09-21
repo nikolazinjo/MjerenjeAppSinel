@@ -16,6 +16,9 @@ public class LogTable extends JTabbedPane implements ExcelListener {
     private static final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
     private Map<String, JTable> tableMap = new LinkedHashMap<>();
 
+    public LogTable() {
+    }
+
     public void loadTables(Map<String, List<String>> sheetData) {
         tableMap.clear();
         removeAll();
@@ -57,9 +60,8 @@ public class LogTable extends JTabbedPane implements ExcelListener {
 
     public void setSelected(String sheetName) {
         int index = findIndex(sheetName);
-        System.out.println(index);
         if (index != -1) {
-            setSelectedIndex(index);
+            super.setSelectedIndex(index);
         }
     }
 
@@ -70,5 +72,10 @@ public class LogTable extends JTabbedPane implements ExcelListener {
             }
         }
         return -1;
+    }
+
+    @Override
+    public void setSelectedIndex(int index) {
+       // prevent mouse selection with mouse
     }
 }

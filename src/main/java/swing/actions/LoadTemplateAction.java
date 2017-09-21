@@ -46,7 +46,7 @@ public class LoadTemplateAction extends AbstractAction {
             @Override
             public void run() {
                 try {
-                    ExcelDataManager dataManager = new ExcelDataManagerImpl(selected.toPath());
+                    ExcelDataManager dataManager = new ExcelDataManagerImpl(selected.toPath(), frame.getNotAllowedSheets());
                     frame.setExcelDataManager(dataManager);
                 } catch (final Exception ex) {
                     Runnable swingJob = new Runnable() {

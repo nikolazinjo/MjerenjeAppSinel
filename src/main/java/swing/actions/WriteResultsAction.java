@@ -2,11 +2,13 @@ package swing.actions;
 
 import data.excel.ExcelDataManager;
 import data.excel.ExcelDataManagerImpl;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import swing.gui.ApplicationFrame;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -62,9 +64,16 @@ public class WriteResultsAction extends AbstractAction {
                 try {
                     dm.writeCollectedData(selected);
                     Path path = dm.getInputExcelFile();
+                    ExcelDataManager dataManager;
                     if (path != null) {
-                        frame.setExcelDataManager(new ExcelDataManagerImpl(path));
+                        dataManager = new ExcelDataManagerImpl(path, frame.getNotAllowedSheets());
+                    } else {
+                        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(LoadDefaultTemplateAction.DEFAULT_FILE_NAME)) {
+                            dataManager = new ExcelDataManagerImpl(new HSSFWorkbook(inputStream), frame.getNotAllowedSheets());
+                        }
                     }
+
+                    frame.setExcelDataManager(dataManager);
                 } catch (final Exception ex) {
                     Runnable swingJob = new Runnable() {
                         @Override

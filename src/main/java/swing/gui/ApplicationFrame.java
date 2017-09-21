@@ -192,6 +192,10 @@ public class ApplicationFrame extends JFrame {
         return excelDataManager;
     }
 
+    public List<String> getNotAllowedSheets() {
+        return notAllowedSheets;
+    }
+
     private class SheetBarListenerImpl implements SheetBarListener {
 
         @Override
