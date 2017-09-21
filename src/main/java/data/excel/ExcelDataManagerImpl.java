@@ -139,9 +139,10 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
                 cell = row.createCell(COUNTER_COLUMN_INDEX);
             }
 
-            cell.setCellValue(entry.getValue().toString());
+            cell.setCellValue(String.valueOf(entry.getValue()-1));
         }
 
+        // writing file to disk
         try (OutputStream os = Files.newOutputStream(outputFile)) {
             hssfWorkbook.write(os);
             hssfWorkbook.close();
