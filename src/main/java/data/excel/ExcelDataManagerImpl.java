@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 
+import javax.swing.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,6 +19,8 @@ import java.util.Map;
 
 public class ExcelDataManagerImpl implements ExcelDataManager {
 
+    public static final int COUNTER_ROW_INDEX = 0;
+    public static final int COUNTER_COLUMN_INDEX = 5;
     public static final int COLUMN_INDEX = 0;
     public static final int START_ROW_INDEX = 1;
     private static final List<String> notAllowed = new ArrayList<>();
@@ -118,6 +121,27 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
         if (written) {
             throw new RuntimeException("Workbook already saved! Please reopen template to start new measurement.");
         }
+
+        // write last impulse number
+        for (Map.Entry<String, Integer> entry : currentSheetIndexes.entrySet()) {
+            if (entry.getValue()<1) {
+                continue;
+            }
+
+            HSSFSheet sheet = hssfWorkbook.getSheet(entry.getKey());
+            HSSFRow row = sheet.getRow(COUNTER_ROW_INDEX);
+            if (row == null) {
+                row = sheet.createRow(COUNTER_ROW_INDEX);
+            }
+
+            HSSFCell cell = row.getCell(COUNTER_COLUMN_INDEX);
+            if (cell == null) {
+                cell = row.createCell(COUNTER_COLUMN_INDEX);
+            }
+
+            cell.setCellValue(entry.getValue().toString());
+        }
+
         try (OutputStream os = Files.newOutputStream(outputFile)) {
             hssfWorkbook.write(os);
             hssfWorkbook.close();

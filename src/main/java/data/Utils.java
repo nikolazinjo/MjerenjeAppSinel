@@ -2,6 +2,9 @@ package data;
 
 import data.excel.ExcelDataManager;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,4 +28,12 @@ public class Utils {
         return list;
     }
 
+
+    public static Image loadImage(String path, int width, int height) {
+        try (InputStream inputStream = Utils.class.getClassLoader().getResourceAsStream(path)) {
+            Image image = ImageIO.read(inputStream).getScaledInstance(width,height,Image.SCALE_DEFAULT);
+            return image;
+        } catch (Exception ignorable) { }
+        return null;
+    }
 }

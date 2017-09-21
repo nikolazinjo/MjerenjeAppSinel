@@ -52,6 +52,7 @@ public class ApplicationFrame extends JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setSize(850, 550);
         setLocationRelativeTo(null);
+        setIconImage(Utils.loadImage("icon.png", 16, -1));
 
         try {
             notAllowedSheets = Utils.readResourceFile("NotAllowedSheetNames");

@@ -16,8 +16,8 @@
       <file leaf-file-name="ApplicationFrame.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/swing/gui/ApplicationFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="122" column="37" lean-forward="false" selection-start-line="122" selection-start-column="37" selection-end-line="122" selection-end-column="37" />
+            <state relative-caret-position="540">
+              <caret line="54" column="36" lean-forward="false" selection-start-line="54" selection-start-column="36" selection-end-line="54" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -28,6 +28,26 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="900">
               <caret line="62" column="23" lean-forward="false" selection-start-line="62" selection-start-column="23" selection-end-line="62" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ExcelDataManagerImpl.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="54">
+              <caret line="125" column="33" lean-forward="false" selection-start-line="125" selection-start-column="33" selection-end-line="125" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Utils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/data/Utils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="337">
+              <caret line="31" column="23" lean-forward="false" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -95,26 +115,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LoadDefaultTemplateAction.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/swing/actions/LoadDefaultTemplateAction.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="54" column="23" lean-forward="false" selection-start-line="54" selection-start-column="23" selection-end-line="54" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ExitAction.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/swing/actions/ExitAction.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="20" column="74" lean-forward="false" selection-start-line="20" selection-start-column="74" selection-end-line="20" selection-end-column="74" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -171,17 +171,17 @@
         <option value="$PROJECT_DIR$/src/main/java/swing/gui/components/SheetBarManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/swing/gui/components/SheetBar.java" />
         <option value="$PROJECT_DIR$/src/main/resources/NotAllowedSheetNames" />
-        <option value="$PROJECT_DIR$/src/main/java/data/Utils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/swing/gui/ApplicationFrame.java" />
         <option value="$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/swing/actions/LoadDefaultTemplateAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/swing/actions/LoadTemplateAction.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/swing/actions/WriteResultsAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/comm/serial/RS232CommDataProvider.java" />
-        <option value="$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/swing/gui/components/LogTable.java" />
         <option value="$PROJECT_DIR$/src/main/java/swing/gui/components/StatusBar.java" />
+        <option value="$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/swing/gui/ApplicationFrame.java" />
+        <option value="$PROJECT_DIR$/src/main/java/data/Utils.java" />
       </list>
     </option>
   </component>
@@ -262,9 +262,8 @@
     <option name="jreName" value="#JAVA_INTERNAL" />
   </component>
   <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="-31" />
-    <option name="y" value="3" />
-    <option name="width" value="920" />
+    <option name="x" value="-7" />
+    <option name="width" value="1321" />
     <option name="height" value="1047" />
   </component>
   <component name="ProjectView">
@@ -402,7 +401,7 @@
     <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../Vjezba/notepadPro" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.31105992" />
@@ -640,12 +639,12 @@
       <workItem from="1505808049376" duration="19270000" />
       <workItem from="1505831265904" duration="27178000" />
       <workItem from="1505888061122" duration="43764000" />
-      <workItem from="1505973805382" duration="8503000" />
+      <workItem from="1505973805382" duration="11386000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="128795000" />
+    <option name="totallyTimeSpent" value="131678000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -714,19 +713,19 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java</url>
-          <line>155</line>
+          <line>179</line>
           <properties />
           <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java</url>
-          <line>54</line>
+          <line>57</line>
           <properties />
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java</url>
-          <line>73</line>
+          <line>76</line>
           <properties />
           <option name="timeStamp" value="14" />
         </line-breakpoint>
@@ -870,16 +869,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/data/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="21" column="12" lean-forward="false" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -965,18 +954,6 @@
         <state relative-caret-position="72">
           <caret line="4" column="9" lean-forward="false" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1229">
-          <caret line="118" column="112" lean-forward="false" selection-start-line="118" selection-start-column="112" selection-end-line="118" selection-end-column="112" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#3727#3728#0" expanded="true" />
-            <element signature="e#3764#3765#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1072,10 +1049,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/data/excel/ExcelDataManagerImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="125" column="33" lean-forward="false" selection-start-line="125" selection-start-column="33" selection-end-line="125" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/data/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="337">
+          <caret line="31" column="23" lean-forward="false" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/swing/gui/ApplicationFrame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="122" column="37" lean-forward="false" selection-start-line="122" selection-start-column="37" selection-end-line="122" selection-end-column="37" />
+        <state relative-caret-position="540">
+          <caret line="54" column="36" lean-forward="false" selection-start-line="54" selection-start-column="36" selection-end-line="54" selection-end-column="36" />
           <folding />
         </state>
       </provider>
