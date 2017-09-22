@@ -19,39 +19,54 @@ public class LogTable extends JTabbedPane implements ExcelListener {
     public LogTable() {
     }
 
-    public void loadTables(Map<String, List<String>> sheetData) {
+    public void loadTables(final Map<String, List<String>> sheetData) {
         tableMap.clear();
-        removeAll();
 
-        for (Map.Entry<String, List<String>> sheet : sheetData.entrySet()) {
-            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        Runnable setTables = new Runnable() {
+            @Override
+            public void run() {
+                removeAll();
 
-            List<String> values = sheet.getValue();
-            for (int i = 0, n = values.size(); i < n; i++) {
-                tableModel.addRow(new Object[]{i + 1, "<template value>", values.get(i)});
+                for (Map.Entry<String, List<String>> sheet : sheetData.entrySet()) {
+                    DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+
+                    List<String> values = sheet.getValue();
+                    for (int i = 0, n = values.size(); i < n; i++) {
+                        tableModel.addRow(new Object[]{i + 1, "<template value>", values.get(i)});
+                    }
+
+                    JTable table = new JTable(tableModel);
+                    addTab(sheet.getKey(), new JScrollPane(table));
+                    tableMap.put(sheet.getKey(), table);
+                }
             }
+        };
 
-            JTable table = new JTable(tableModel);
-            addTab(sheet.getKey(), new JScrollPane(table));
-            tableMap.put(sheet.getKey(), table);
-        }
+        SwingUtilities.invokeLater(setTables);
     }
 
     @Override
-    public void valueChanged(String sheetName, int row, int coll, Object data) {
+    public void valueChanged(final String sheetName,final int row,final int coll,final Object data) {
         if (!tableMap.containsKey(sheetName)) {
             return;
         }
 
         JTable table = tableMap.get(sheetName);
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        final DefaultTableModel model = (DefaultTableModel) table.getModel();
 
-        if (data != null) {
-            Date date = new Date(System.currentTimeMillis());
-            model.addRow(new Object[]{row, format.format(date), data});
-        } else if (!isEmpty(sheetName)) {
-            model.removeRow(row);
-        }
+        Runnable swingJob = new Runnable() {
+            @Override
+            public void run() {
+                if (data != null) {
+                    Date date = new Date(System.currentTimeMillis());
+                    model.addRow(new Object[]{row, format.format(date), data});
+                } else if (!isEmpty(sheetName)) {
+                    model.removeRow(row);
+                }
+            }
+        };
+
+        SwingUtilities.invokeLater(swingJob);
     }
 
     public boolean isEmpty(String sheetName) {
@@ -76,6 +91,6 @@ public class LogTable extends JTabbedPane implements ExcelListener {
 
     @Override
     public void setSelectedIndex(int index) {
-       // prevent mouse selection with mouse
+       // prevent selection with mouse
     }
 }

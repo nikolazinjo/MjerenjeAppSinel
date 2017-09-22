@@ -2,12 +2,14 @@ package swing.actions;
 
 import data.excel.ExcelDataManager;
 import data.excel.ExcelDataManagerImpl;
+import swing.actions.jobs.LoadingJob;
 import swing.gui.ApplicationFrame;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 public class LoadTemplateAction extends AbstractAction {
@@ -41,30 +43,8 @@ public class LoadTemplateAction extends AbstractAction {
             frame.getActions().get(WriteResultsAction.class).actionPerformed(e);
         }
 
-        final File selected = fileChooser.getSelectedFile();
-        Runnable job = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ExcelDataManager dataManager = new ExcelDataManagerImpl(selected.toPath(), frame.getNotAllowedSheets());
-                    frame.setExcelDataManager(dataManager);
-                } catch (final Exception ex) {
-                    Runnable swingJob = new Runnable() {
-                        @Override
-                        public void run() {
-                            JOptionPane.showMessageDialog(frame,
-                                    "Error occurred: " + ex.getMessage(),
-                                    "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    };
-
-                    SwingUtilities.invokeLater(swingJob);
-                }
-            }
-        };
-
-        Thread thread = new Thread(job);
-        thread.start();
+        Path selected = fileChooser.getSelectedFile().toPath();
+        LoadingJob loadingJob = new LoadingJob(frame, selected, false);
+        new Thread(loadingJob).start();
     }
 }

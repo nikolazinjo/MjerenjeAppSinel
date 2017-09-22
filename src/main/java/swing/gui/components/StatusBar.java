@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Objects;
 
 
-public class StatusBar extends JPanel implements CommListener, SheetBarListener {
+public class StatusBar extends JPanel implements CommListener {
 
     public static final Color GREEN_COLOR = new Color(2, 124, 2);
     public static final Color RED_COLOR = new Color(124, 2, 2);
@@ -46,36 +46,37 @@ public class StatusBar extends JPanel implements CommListener, SheetBarListener 
     }
 
     @Override
-    public void commEvent(CommStatusEvents event, String status, String shortDesc) {
-        if (shortDesc.isEmpty()) {
-            statusLabel.setText(String.format("STATUS: %s", status));
-        } else {
-            statusLabel.setText(String.format("STATUS: %s - %s", status, shortDesc));
-        }
+    public void commEvent(final CommStatusEvents event, final String status, final String shortDesc) {
+        Runnable job = new Runnable() {
+            @Override
+            public void run() {
+                if (shortDesc.isEmpty()) {
+                    statusLabel.setText(String.format("STATUS: %s", status));
+                } else {
+                    statusLabel.setText(String.format("STATUS: %s - %s", status, shortDesc));
+                }
 
-        if (event == CommStatusEvents.DISCONNECTED) {
-            statusLabel.setForeground(RED_COLOR);
-        } else {
-            statusLabel.setForeground(GREEN_COLOR);
-        }
+                if (event == CommStatusEvents.DISCONNECTED) {
+                    statusLabel.setForeground(RED_COLOR);
+                } else {
+                    statusLabel.setForeground(GREEN_COLOR);
+                }
+            }
+        };
+
+        SwingUtilities.invokeLater(job);
     }
 
-    @Override
-    public void writingStarted(String sheetName) {
-        sheetLabel.setText("Writing data to " + sheetName);
-        sheetLabel.setForeground(GREEN_COLOR);
-    }
+    public void fireDataStatus(final String status, final Color messageColor) {
+        Runnable job = new Runnable() {
+            @Override
+            public void run() {
+                sheetLabel.setText(status);
+                sheetLabel.setForeground(messageColor);
+            }
+        };
 
-    @Override
-    public void writingStopped(String sheetName) {
-        sheetLabel.setText("Data writing stopped to " + sheetName);
-        sheetLabel.setForeground(RED_COLOR);
-    }
-
-    @Override
-    public void dataCleared(String sheetName) {
-        sheetLabel.setText("Data cleared from " + sheetName);
-        sheetLabel.setForeground(WARNING_COLOR);
+        SwingUtilities.invokeLater(job);
     }
 
     private static class Clock extends Thread {

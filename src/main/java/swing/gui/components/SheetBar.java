@@ -84,6 +84,8 @@ public class SheetBar extends JPanel implements SheetBarManager, CommListener {
                     return;
                 }
 
+                chooser.setSelectedIndex(chooser.getSelectedIndex());
+
                 for (SheetBarListener listener : listeners) {
                     listener.writingStarted(sheetName);
                 }
@@ -154,7 +156,7 @@ public class SheetBar extends JPanel implements SheetBarManager, CommListener {
     }
 
     @Override
-    public void commEvent(CommStatusEvents event, String status, String shortDesc) {
+    public void commEvent(final CommStatusEvents event, final String status, final String shortDesc) {
         this.status = event;
     }
 

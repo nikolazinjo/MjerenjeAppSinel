@@ -24,5 +24,4 @@ public interface ExcelDataManager extends DataListener {
 
     void removeExcelListener(ExcelListener listener);
 
-    Path getInputExcelFile();
 }

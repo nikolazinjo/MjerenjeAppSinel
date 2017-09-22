@@ -34,13 +34,13 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
     private Path inputExcelFile;
 
 
-    public ExcelDataManagerImpl(HSSFWorkbook workbook, List<String> notAllowed) {
+    public ExcelDataManagerImpl(HSSFWorkbook workbook, List<String> notAllowed, boolean resetSheets) {
         this.hssfWorkbook = workbook;
         this.notAllowed.addAll(notAllowed);
-        loadSheets();
+        loadSheets(resetSheets);
     }
 
-    public ExcelDataManagerImpl(Path inputExcelFile, List<String> notAllowed) {
+    public ExcelDataManagerImpl(Path inputExcelFile, List<String> notAllowed, boolean resetSheets) {
         if (!Files.isReadable(inputExcelFile)) {
             throw new RuntimeException("File '" + inputExcelFile.getFileName() + "' can't be open opened or read!");
         }
@@ -51,12 +51,12 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
             throw new RuntimeException(e.getMessage());
         }
 
-        loadSheets();
-        this.inputExcelFile = inputExcelFile;
         this.notAllowed.addAll(notAllowed);
+        this.inputExcelFile = inputExcelFile;
+        loadSheets(resetSheets);
     }
 
-    private void loadSheets() {
+    private void loadSheets(boolean resetSheets) {
         for (int i = 0, n = hssfWorkbook.getNumberOfSheets(); i < n; i++) {
             HSSFSheet sheet = hssfWorkbook.getSheetAt(i);
             sheet.setForceFormulaRecalculation(true);
@@ -68,6 +68,19 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
             currentSheetIndexes.put(sheet.getSheetName(), START_ROW_INDEX);
 
             List<String> collData = new ArrayList<>();
+            if (resetSheets) {
+                selectWorkingSheet(sheet.getSheetName());
+
+                //reset column data
+                resetSheetColumnData();
+                workbookData.put(sheet.getSheetName(), collData);
+
+                // reset counter
+                HSSFCell cell = getCell(sheet, COUNTER_ROW_INDEX, COUNTER_COLUMN_INDEX);
+                cell.setCellValue((String) null);
+                continue;
+            }
+
             for (int j = START_ROW_INDEX, m = sheet.getLastRowNum(); j < m; j++) {
                 HSSFRow row = sheet.getRow(j);
                 if (row == null) {
@@ -96,9 +109,11 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
 
             workbookData.put(sheet.getSheetName(), collData);
         }
+
+        fileModified = false;
     }
 
-
+    @Override
     public boolean isFileModified() {
         return fileModified;
     }
@@ -114,11 +129,6 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
     }
 
     @Override
-    public Path getInputExcelFile() {
-        return inputExcelFile;
-    }
-
-
     public void writeCollectedData(Path outputFile) {
         if (written) {
             throw new RuntimeException("Workbook already saved! Please reopen template to start new measurement.");
@@ -131,16 +141,7 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
             }
 
             HSSFSheet sheet = hssfWorkbook.getSheet(entry.getKey());
-            HSSFRow row = sheet.getRow(COUNTER_ROW_INDEX);
-            if (row == null) {
-                row = sheet.createRow(COUNTER_ROW_INDEX);
-            }
-
-            HSSFCell cell = row.getCell(COUNTER_COLUMN_INDEX);
-            if (cell == null) {
-                cell = row.createCell(COUNTER_COLUMN_INDEX);
-            }
-
+            HSSFCell cell = getCell(sheet,COUNTER_ROW_INDEX, COUNTER_COLUMN_INDEX);
             cell.setCellValue(String.valueOf(entry.getValue()-1));
         }
 
@@ -157,15 +158,31 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
 
     }
 
+    private HSSFCell getCell(HSSFSheet sheet, int row, int coll) {
+        HSSFRow excelRow = sheet.getRow(row);
+        if (excelRow == null) {
+            excelRow = sheet.createRow(row);
+        }
+
+        HSSFCell cell = excelRow.getCell(coll);
+        if (cell == null) {
+            cell = excelRow.createCell(coll);
+        }
+
+        return cell;
+    }
+
     @Override
     public Map<String, List<String>> getData() {
         return workbookData;
     }
 
+    @Override
     public List<String> getSheets() {
         return new ArrayList<>(currentSheetIndexes.keySet());
     }
 
+    @Override
     public void selectWorkingSheet(String sheetName) {
         int index = hssfWorkbook.getSheetIndex(sheetName);
         if (index >= 0 && index != hssfWorkbook.getActiveSheetIndex()) {
@@ -173,6 +190,7 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
         }
     }
 
+    @Override
     public void resetSheetColumnData() {
         HSSFSheet sheet = getActiveSheet();
         if (sheet == null) {
@@ -188,7 +206,7 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
 
             HSSFCell cell = row.getCell(COLUMN_INDEX);
             if (cell != null) {
-                row.removeCell(cell);
+                cell.setCellValue((String)null);
             }
 
             notifyListeners(sheetName, 0, COLUMN_INDEX, null);
@@ -216,15 +234,8 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
         }
 
         String sheetName = sheet.getSheetName();
-
-        // get row
         int currentRow = currentSheetIndexes.get(sheetName);
-        HSSFRow row = sheet.getRow(currentRow);
-        row = (row == null) ? sheet.createRow(currentRow) : row;
-
-        // get cell
-        HSSFCell cell = row.getCell(COLUMN_INDEX);
-        cell = (cell == null) ? row.createCell(COLUMN_INDEX) : cell;
+        HSSFCell cell = getCell(sheet, currentRow, COLUMN_INDEX);
 
         // write data
         cell.setCellValue(data);

@@ -5,7 +5,9 @@ import comm.serial.RS232CommDataProvider;
 import comm.serial.RS232CommProvider;
 import data.Utils;
 import data.excel.ExcelDataManager;
+import jssc.SerialPortException;
 import swing.actions.*;
+import swing.actions.jobs.LoadingJob;
 import swing.gui.components.LogTable;
 import swing.gui.components.SheetBar;
 import swing.gui.components.SheetBarListener;
@@ -18,32 +20,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ApplicationFrame extends JFrame {
 
-    private List<String> notAllowedSheets;
     private final RS232CommProvider communicationProvider;
     private final JTextArea area = new JTextArea();
+    private List<String> notAllowedSheets;
     private SheetBarListenerImpl sheetBarListenerImpl;
     private ExcelDataManager excelDataManager;
     private SheetBar sheetBar;
     private StatusBar statusBar;
     private LogTable logTable;
+    private Map<Class<? extends Action>, Action> actions;
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignorable) {
-        }
+    {
+        Map<Class<? extends Action>, Action> tmp = new HashMap<>();
+        tmp.put(ConnectAction.class, new ConnectAction("Connect", this));
+        tmp.put(DisconnectAction.class, new DisconnectAction("Disconnect", this));
+        tmp.put(ExitAction.class, new ExitAction("Exit", this));
+        tmp.put(LoadDefaultTemplateAction.class, new LoadDefaultTemplateAction("Load template (default)", this));
+        tmp.put(LoadTemplateAction.class, new LoadTemplateAction("Load template", this));
+        tmp.put(WriteResultsAction.class, new WriteResultsAction("Write results", this));
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new ApplicationFrame("Measurement Wizard");
-            }
-        });
+        actions = Collections.unmodifiableMap(tmp);
     }
 
     public ApplicationFrame(String title) {
@@ -57,11 +60,14 @@ public class ApplicationFrame extends JFrame {
         try {
             notAllowedSheets = Utils.readResourceFile("NotAllowedSheetNames");
         } catch (IOException ex) {
-            notAllowedSheets = new ArrayList<>();
+            notAllowedSheets = Collections.EMPTY_LIST;
         }
 
         communicationProvider = new RS232CommDataProvider();
         sheetBarListenerImpl = new SheetBarListenerImpl();
+
+        LoadingJob loadingJob = new LoadingJob(this, null, true);
+        new Thread(loadingJob).start();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -78,6 +84,20 @@ public class ApplicationFrame extends JFrame {
 
         initGui();
         setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignorable) {
+        }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new ApplicationFrame("Measurement Wizard");
+            }
+        });
     }
 
     private void initGui() {
@@ -105,7 +125,6 @@ public class ApplicationFrame extends JFrame {
 
         // add listeners
         sheetBar.addListener(sheetBarListenerImpl);
-        sheetBar.addListener(statusBar);
 
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -136,14 +155,23 @@ public class ApplicationFrame extends JFrame {
             }
         });
 
-
+        autoConnect();
     }
 
+    private void autoConnect() {
+        String[] ports = communicationProvider.getAvailablePorts();
+        for (String port : ports) {
+            try {
+                communicationProvider.connect(port);
+                break;
+            } catch (SerialPortException ignorable) {
+            }
+        }
+    }
 
     public RS232CommProvider getCommunicationProvider() {
         return communicationProvider;
     }
-
 
     public LogTable getLogTable() {
         return logTable;
@@ -157,20 +185,9 @@ public class ApplicationFrame extends JFrame {
         return area;
     }
 
-    private Map<Class<? extends Action>, Action> actions;
-
-    {
-        Map<Class<? extends Action>, Action> tmp = new HashMap<>();
-        tmp.put(ConnectAction.class, new ConnectAction("Connect", this));
-        tmp.put(DisconnectAction.class, new DisconnectAction("Disconnect", this));
-        tmp.put(ExitAction.class, new ExitAction("Exit", this));
-        tmp.put(LoadDefaultTemplateAction.class, new LoadDefaultTemplateAction("Load template (default)", this));
-        tmp.put(LoadTemplateAction.class, new LoadTemplateAction("Load template", this));
-        tmp.put(WriteResultsAction.class, new WriteResultsAction("Write results", this));
-
-        actions = Collections.unmodifiableMap(tmp);
+    public ExcelDataManager getExcelDataManager() {
+        return excelDataManager;
     }
-
 
     public void setExcelDataManager(ExcelDataManager excelDataManager) {
         if (excelDataManager != null) {
@@ -188,12 +205,12 @@ public class ApplicationFrame extends JFrame {
         this.excelDataManager = excelDataManager;
     }
 
-    public ExcelDataManager getExcelDataManager() {
-        return excelDataManager;
-    }
-
     public List<String> getNotAllowedSheets() {
         return notAllowedSheets;
+    }
+
+    public StatusBar getStatusBar() {
+        return statusBar;
     }
 
     private class SheetBarListenerImpl implements SheetBarListener {
@@ -203,12 +220,13 @@ public class ApplicationFrame extends JFrame {
             if (excelDataManager != null) {
                 communicationProvider.addDataListener(excelDataManager);
                 excelDataManager.selectWorkingSheet(sheetName);
-                area.setForeground(StatusBar.GREEN_COLOR);
 
                 getActions().get(LoadTemplateAction.class).setEnabled(false);
                 getActions().get(WriteResultsAction.class).setEnabled(false);
                 getActions().get(LoadDefaultTemplateAction.class).setEnabled(false);
             }
+
+            getStatusBar().fireDataStatus("Writing data to " + sheetName, StatusBar.GREEN_COLOR);
         }
 
         @Override
@@ -217,18 +235,18 @@ public class ApplicationFrame extends JFrame {
                 communicationProvider.removeDataListener(excelDataManager);
 
                 getActions().get(WriteResultsAction.class).setEnabled(true);
+                getStatusBar().fireDataStatus("Data writing stopped to " + sheetName, StatusBar.RED_COLOR);
             }
+
             getActions().get(LoadDefaultTemplateAction.class).setEnabled(true);
             getActions().get(LoadTemplateAction.class).setEnabled(true);
-
-
-            area.setForeground(StatusBar.RED_COLOR);
         }
 
         @Override
         public void dataCleared(String sheetName) {
             if (excelDataManager != null) {
                 excelDataManager.resetSheetColumnData();
+                getStatusBar().fireDataStatus("Data cleared from " + sheetName, StatusBar.WARNING_COLOR);
             }
         }
     }

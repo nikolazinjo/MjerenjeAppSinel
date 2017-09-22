@@ -12,7 +12,7 @@ public class Rs232emulator {
     public static void main(String[] args) {
 
 
-        SerialPort serialPort = new SerialPort("COM1");
+        SerialPort serialPort = new SerialPort("COM2");
 
         try {
             // open port for communication

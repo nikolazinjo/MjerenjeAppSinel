@@ -2,6 +2,6 @@ package comm;
 
 public interface CommListener {
 
-    void commEvent(CommStatusEvents event, String status, String shortDesc);
+    void commEvent(final CommStatusEvents event,final String status,final String shortDesc);
 
 }

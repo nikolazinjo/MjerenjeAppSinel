@@ -3,6 +3,8 @@ package swing.actions;
 import data.excel.ExcelDataManager;
 import data.excel.ExcelDataManagerImpl;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import swing.actions.jobs.LoadingJob;
+import swing.actions.jobs.WritingJob;
 import swing.gui.ApplicationFrame;
 
 import javax.swing.*;
@@ -58,42 +60,23 @@ public class WriteResultsAction extends AbstractAction {
         }
 
         final Path selected = fileChooser.getSelectedFile().toPath();
-        Runnable job = new Runnable() {
+
+        Runnable reloadAfterWriting = new Runnable() {
             @Override
             public void run() {
+                Thread thread = new Thread(new WritingJob(frame,selected));
+                thread.start();
                 try {
-                    dm.writeCollectedData(selected);
-                    Path path = dm.getInputExcelFile();
-                    ExcelDataManager dataManager;
-                    if (path != null) {
-                        dataManager = new ExcelDataManagerImpl(path, frame.getNotAllowedSheets());
-                    } else {
-                        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(LoadDefaultTemplateAction.DEFAULT_FILE_NAME)) {
-                            dataManager = new ExcelDataManagerImpl(new HSSFWorkbook(inputStream), frame.getNotAllowedSheets());
-                        }
-                    }
-
-                    frame.setExcelDataManager(dataManager);
-                } catch (final Exception ex) {
-                    Runnable swingJob = new Runnable() {
-                        @Override
-                        public void run() {
-                            JOptionPane.showMessageDialog(frame, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    };
-
-                    SwingUtilities.invokeLater(swingJob);
-                    return;
+                    // waits for thread to die, and after continues for its execution.
+                    thread.join();
+                } catch (InterruptedException ignorable) {
                 }
 
-                JOptionPane.showMessageDialog(frame,
-                        "File '" + selected.getFileName() + "' successfully saved!",
-                        "File saved",
-                        JOptionPane.INFORMATION_MESSAGE);
+                new Thread(new LoadingJob(frame, null, true)).start();
             }
         };
 
-        Thread thread = new Thread(job);
-        thread.start();
+        new Thread(reloadAfterWriting).start();
     }
+
 }
