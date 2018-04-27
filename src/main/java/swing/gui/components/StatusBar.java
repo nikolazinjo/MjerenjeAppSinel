@@ -16,10 +16,9 @@ public class StatusBar extends JPanel implements CommListener {
     public static final Color GREEN_COLOR = new Color(2, 124, 2);
     public static final Color RED_COLOR = new Color(124, 2, 2);
     public static final Color WARNING_COLOR = new Color(214, 95, 18);
-
-    private Clock clock;
     private final JLabel statusLabel;
     private final JLabel sheetLabel;
+    private Clock clock;
 
     public StatusBar() {
         setLayout(new GridLayout(1, 3, 5, 5));
@@ -81,8 +80,8 @@ public class StatusBar extends JPanel implements CommListener {
 
     private static class Clock extends Thread {
 
-        private final Runnable job = new SwingJob();
         private final static int DELAY = 1000;
+        private final Runnable job = new SwingJob();
         private final JLabel label;
         private final SimpleDateFormat formatter;
         private volatile boolean running = true;
@@ -110,7 +109,7 @@ public class StatusBar extends JPanel implements CommListener {
             }
         }
 
-        private  class SwingJob implements Runnable {
+        private class SwingJob implements Runnable {
             @Override
             public void run() {
                 Date dateTime = new Date(System.currentTimeMillis());

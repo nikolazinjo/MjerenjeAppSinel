@@ -1,14 +1,12 @@
 package swing.actions;
 
 import data.excel.ExcelDataManager;
-import data.excel.ExcelDataManagerImpl;
 import swing.actions.jobs.LoadingJob;
 import swing.gui.ApplicationFrame;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -30,8 +28,10 @@ public class LoadTemplateAction extends AbstractAction {
         // filters
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Excel 97-2003 (*.xls)", "xls"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Excel Open XML (*.xlsx)", "xlsx"));
+        fileChooser.addChoosableFileFilter(
+                new FileNameExtensionFilter("Microsoft Excel 97-2003 (*.xls)", "xls"));
+        fileChooser.addChoosableFileFilter(
+                new FileNameExtensionFilter("Microsoft Excel Open XML (*.xlsx)", "xlsx"));
 
         int result = fileChooser.showOpenDialog(frame);
         if (result != JFileChooser.APPROVE_OPTION) {

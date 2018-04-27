@@ -46,7 +46,7 @@ public class LogTable extends JTabbedPane implements ExcelListener {
     }
 
     @Override
-    public void valueChanged(final String sheetName,final int row,final int coll,final Object data) {
+    public void valueChanged(final String sheetName, final int row, final int coll, final Object data) {
         if (!tableMap.containsKey(sheetName)) {
             return;
         }
@@ -91,6 +91,6 @@ public class LogTable extends JTabbedPane implements ExcelListener {
 
     @Override
     public void setSelectedIndex(int index) {
-       // prevent selection with mouse
+        // prevent selection with mouse
     }
 }

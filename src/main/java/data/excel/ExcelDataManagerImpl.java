@@ -6,7 +6,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 
-import javax.swing.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,7 +30,6 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
     private HSSFWorkbook hssfWorkbook;
     private boolean fileModified;
     private boolean written;
-    private Path inputExcelFile;
 
 
     public ExcelDataManagerImpl(HSSFWorkbook workbook, List<String> notAllowed, boolean resetSheets) {
@@ -42,17 +40,16 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
 
     public ExcelDataManagerImpl(Path inputExcelFile, List<String> notAllowed, boolean resetSheets) {
         if (!Files.isReadable(inputExcelFile)) {
-            throw new RuntimeException("File '" + inputExcelFile.getFileName() + "' can't be open opened or read!");
+            throw new RuntimeException("File '" + inputExcelFile.getFileName() + "' can't be opened for reading!");
         }
 
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(inputExcelFile))) {
             hssfWorkbook = new HSSFWorkbook(bis);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
 
         this.notAllowed.addAll(notAllowed);
-        this.inputExcelFile = inputExcelFile;
         loadSheets(resetSheets);
     }
 
@@ -131,18 +128,18 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
     @Override
     public void writeCollectedData(Path outputFile) {
         if (written) {
-            throw new RuntimeException("Workbook already saved! Please reopen template to start new measurement.");
+            throw new RuntimeException("Workbook already written! Open a new template for next measurements.");
         }
 
         // write last impulse number
         for (Map.Entry<String, Integer> entry : currentSheetIndexes.entrySet()) {
-            if (entry.getValue()<1) {
+            if (entry.getValue() < 1) {
                 continue;
             }
 
             HSSFSheet sheet = hssfWorkbook.getSheet(entry.getKey());
-            HSSFCell cell = getCell(sheet,COUNTER_ROW_INDEX, COUNTER_COLUMN_INDEX);
-            cell.setCellValue(String.valueOf(entry.getValue()-1));
+            HSSFCell cell = getCell(sheet, COUNTER_ROW_INDEX, COUNTER_COLUMN_INDEX);
+            cell.setCellValue(String.valueOf(entry.getValue() - 1));
         }
 
         // writing file to disk
@@ -153,7 +150,7 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
             fileModified = false;
             listeners.clear();
         } catch (IOException e) {
-            throw new RuntimeException("Workbook can't be exported to file '" + outputFile.getFileName() + "'!");
+            throw new RuntimeException("Can't write workbook to file '" + outputFile.getFileName() + "'!");
         }
 
     }
@@ -206,7 +203,7 @@ public class ExcelDataManagerImpl implements ExcelDataManager {
 
             HSSFCell cell = row.getCell(COLUMN_INDEX);
             if (cell != null) {
-                cell.setCellValue((String)null);
+                cell.setCellValue((String) null);
             }
 
             notifyListeners(sheetName, 0, COLUMN_INDEX, null);

@@ -1,8 +1,6 @@
 package swing.actions;
 
 import data.excel.ExcelDataManager;
-import data.excel.ExcelDataManagerImpl;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import swing.actions.jobs.LoadingJob;
 import swing.actions.jobs.WritingJob;
 import swing.gui.ApplicationFrame;
@@ -10,7 +8,6 @@ import swing.gui.ApplicationFrame;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,6 +32,7 @@ public class WriteResultsAction extends AbstractAction {
         Date date = new Date(System.currentTimeMillis());
         SimpleDateFormat format = new SimpleDateFormat("'Mjerenja'yyyyMMdd-hhmmss'.xls'");
         fileChooser.setSelectedFile(new File(format.format(date)));
+
         int result = fileChooser.showSaveDialog(frame);
         if (result != JFileChooser.APPROVE_OPTION) {
             return;
@@ -51,7 +49,8 @@ public class WriteResultsAction extends AbstractAction {
 
         if (!dm.isFileModified()) {
             int res = JOptionPane.showConfirmDialog(frame,
-                    "There is no new collected data written to opened Workbook which can be saved. Do you want to proceed anyway?",
+                    "There is no new collected data written to opened Workbook which can be saved. " +
+                            "Do you want to proceed anyway?",
                     "Not found new collected data",
                     JOptionPane.YES_NO_OPTION);
             if (res != JOptionPane.YES_OPTION) {
@@ -64,10 +63,11 @@ public class WriteResultsAction extends AbstractAction {
         Runnable reloadAfterWriting = new Runnable() {
             @Override
             public void run() {
-                Thread thread = new Thread(new WritingJob(frame,selected));
-                thread.start();
                 try {
-                    // waits for thread to die, and after continues for its execution.
+                    Thread thread = new Thread(new WritingJob(frame, selected));
+                    thread.start();
+
+                    // waits for thread to finish her job.
                     thread.join();
                 } catch (InterruptedException ignorable) {
                 }

@@ -80,7 +80,8 @@ public class SheetBar extends JPanel implements SheetBarManager, CommListener {
                 }
 
                 if (status != CommStatusEvents.CONNECTED) {
-                    JOptionPane.showMessageDialog(frame, "Device is not connected!", "Can't start", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Device is not connected!",
+                            "Can't start", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 

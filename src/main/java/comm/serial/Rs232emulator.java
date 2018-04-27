@@ -11,10 +11,10 @@ public class Rs232emulator {
 
     public static void main(String[] args) {
 
-
-        SerialPort serialPort = new SerialPort("COM2");
-
+        SerialPort serialPort = null;
         try {
+            serialPort = new SerialPort("COM2");
+
             // open port for communication
             serialPort.openPort();
 
@@ -22,9 +22,8 @@ public class Rs232emulator {
             serialPort.setParams(9600, 8, 1, 0);
 
             try (Scanner sc = new Scanner(System.in)) {
-                String input = null;
                 while (sc.hasNextLine()) {
-                    input = sc.nextLine();
+                    String input = sc.nextLine();
                     if ("exit".equalsIgnoreCase(input)) {
                         return;
                     }

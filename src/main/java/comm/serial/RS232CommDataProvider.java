@@ -19,16 +19,20 @@ public class RS232CommDataProvider implements RS232CommProvider {
     @Override
     public void connect(String serialPortName) throws SerialPortException {
         disconnect();
+
         serialPort = new SerialPort(serialPortName);
         serialPort.openPort();
-        serialPort.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-        serialPort.addEventListener(new RS232Listener());
+        serialPort.setParams(
+                SerialPort.BAUDRATE_9600,
+                SerialPort.DATABITS_8,
+                SerialPort.STOPBITS_1,
+                SerialPort.PARITY_NONE);
 
-        for (CommListener listener : commListeners) {
-            listener.commEvent(CommStatusEvents.CONNECTED,
-                    "Connected",
-                    "Listening on port " + serialPort.getPortName());
-        }
+        serialPort.addEventListener(new RS232Listener());
+        notifyCommListeners(
+                CommStatusEvents.CONNECTED,
+                "Connected",
+                "Listening on port " + serialPort.getPortName());
     }
 
     @Override
@@ -36,9 +40,10 @@ public class RS232CommDataProvider implements RS232CommProvider {
         if (serialPort != null && serialPort.isOpened()) {
             serialPort.closePort();
 
-            for (CommListener listener : commListeners) {
-                listener.commEvent(CommStatusEvents.DISCONNECTED, "Disconnected", "");
-            }
+            notifyCommListeners(
+                    CommStatusEvents.DISCONNECTED,
+                    "Disconnected",
+                    "");
         }
     }
 
@@ -83,6 +88,12 @@ public class RS232CommDataProvider implements RS232CommProvider {
         }
     }
 
+    private void notifyCommListeners(CommStatusEvents status, String statusMessage, String description) {
+        for (CommListener listener : commListeners) {
+            listener.commEvent(status, statusMessage, description);
+        }
+    }
+
 
     private class RS232Listener implements SerialPortEventListener {
 
@@ -115,6 +126,7 @@ public class RS232CommDataProvider implements RS232CommProvider {
                                     notifyListeners(data);
                                 } catch (NumberFormatException ignorable) {
                                 }
+
                                 streamBuffer.reset();
                                 matchedCR = false;
                                 break;

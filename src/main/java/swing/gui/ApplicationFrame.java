@@ -122,10 +122,8 @@ public class ApplicationFrame extends JFrame {
         statusBar = new StatusBar();
         add(statusBar, BorderLayout.SOUTH);
 
-
         // add listeners
         sheetBar.addListener(sheetBarListenerImpl);
-
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         add(splitPane, BorderLayout.CENTER);
@@ -144,7 +142,6 @@ public class ApplicationFrame extends JFrame {
         splitPane.setBottomComponent(scrollPaneDown);
         splitPane.setTopComponent(logTable);
         splitPane.setResizeWeight(0.7d);
-
 
         communicationProvider.addCommListener(statusBar);
         communicationProvider.addCommListener(sheetBar);
