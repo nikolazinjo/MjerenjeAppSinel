@@ -15,5 +15,6 @@
 > this project and run one of the following commands:
 > 1) mvn clean compile assembly:single install
 > 2) mvn clean install
+
 > and executable file will be created. Note that both commands will provide two versions of .jar executable files where one
 > of them is build with all included dependencies.
